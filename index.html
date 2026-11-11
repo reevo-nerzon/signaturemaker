@@ -419,17 +419,31 @@
           </div>
         </div>
 
-        <!-- Horizontal Position (Left / Right) Control -->
+        <!-- Divider Spacing (Gap between Logo and Divider) Control -->
+        <div class="control-box">
+          <div class="slider-header">
+            <span style="font-size:11.5px; font-weight:700; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.05em;">Divider Spacing (Gap from Logo)</span>
+            <span class="value-badge" id="gap-display-badge">Gap 14px</span>
+          </div>
+          <input type="range" id="gap-slider" min="4" max="30" value="14" step="1" oninput="onGapChange(this.value)">
+          <div class="preset-chips">
+            <button class="chip-btn" onclick="setGap(8)">Closer (8px)</button>
+            <button class="chip-btn active" id="chip-gap-default" onclick="setGap(14)">Spacious / Balanced (14px)</button>
+            <button class="chip-btn" onclick="setGap(22)">Extra Wide (22px)</button>
+          </div>
+        </div>
+
+        <!-- Horizontal Text Position (Left / Right) Control -->
         <div class="control-box">
           <div class="slider-header">
             <span style="font-size:11.5px; font-weight:700; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.05em;">Horizontal Text Alignment (Left / Right)</span>
-            <span class="value-badge" id="hoffset-display-badge">Left 20px</span>
+            <span class="value-badge" id="hoffset-display-badge">Left 18px</span>
           </div>
-          <input type="range" id="hoffset-slider" min="8" max="45" value="20" step="1" oninput="onHOffsetChange(this.value)">
+          <input type="range" id="hoffset-slider" min="6" max="45" value="18" step="1" oninput="onHOffsetChange(this.value)">
           <div class="preset-chips">
-            <button class="chip-btn" onclick="setHOffset(12)">&larr; Closer to Line (12px)</button>
-            <button class="chip-btn active" id="chip-hoffset-default" onclick="setHOffset(20)">Balanced (20px)</button>
-            <button class="chip-btn" onclick="setHOffset(30)">More Indented (30px) &rarr;</button>
+            <button class="chip-btn" onclick="setHOffset(10)">&larr; Closer to Line (10px)</button>
+            <button class="chip-btn active" id="chip-hoffset-default" onclick="setHOffset(18)">Balanced (18px)</button>
+            <button class="chip-btn" onclick="setHOffset(28)">More Indented (28px) &rarr;</button>
           </div>
         </div>
 
@@ -501,21 +515,26 @@
     const WEBSITE_TEXT = 'www.reevotech.com';
 
     let currentScale = 1.0;
-    let baseLeftOffset = 20; // default padding left for text from divider
+    let baseDividerGap = 14; // default gap on either side of the divider line
+    let baseLeftOffset = 18; // default padding left for text from divider
     let baseTopOffset = 24;  // default padding top for text
 
-    function getSignatureHtml(name, title, mobile, email, slogan = '', scale = 1.0, leftOffset = 20, topOffset = 24) {
+    function getSignatureHtml(name, title, mobile, email, slogan = '', scale = 1.0, dividerGap = 14, leftOffset = 18, topOffset = 24) {
       const cleanPhone = mobile.replace(/[^0-9+]/g, '');
 
       // Proportional dimensions based on scale
       const w = Math.round(552 * scale);
       const h = Math.round(198 * scale);
-      const logoCol = Math.round(186 * scale);
       const logoW = Math.round(166 * scale);
       const logoH = Math.round(138 * scale);
       const dividerW = Math.max(1, Math.round(2 * scale));
       const dividerH = Math.round(156 * scale);
-      const rightCol = w - logoCol - dividerW;
+      const gap = Math.round(dividerGap * scale);
+
+      // Logo column has left margin 12px and right padding of 'gap'
+      const logoCol = Math.round((166 + 12 + gap) * scale);
+      const dividerCol = dividerW + (gap * 2);
+      const rightCol = Math.max(200, w - logoCol - dividerW);
       const padTop = Math.round(topOffset * scale);
       const padLeft = Math.round(leftOffset * scale);
 
@@ -547,14 +566,14 @@
   <tr>
     <!-- Column 1: REEVO Logo Image (Physical element blocks mobile squeeze) -->
     <td width="${logoCol}" valign="middle" align="center"
-        style="width:${logoCol}px; text-align:center; padding:0 0 0 14px; vertical-align:middle;">
+        style="width:${logoCol}px; text-align:center; padding:0 ${gap}px 0 12px; vertical-align:middle;">
       <a href="${WEBSITE_URL}" target="_blank" style="text-decoration:none; display:inline-block;">
         <img src="${LOGO_URL}" width="${logoW}" height="${logoH}" alt="REEVO"
              style="display:block; width:${logoW}px; height:${logoH}px; border:0; margin:0 auto;" />
       </a>
     </td>
 
-    <!-- Column 2: Divider Line Image -->
+    <!-- Column 2: Divider Line Image (with dedicated breathing room) -->
     <td width="${dividerW}" valign="middle" align="center"
         style="width:${dividerW}px; font-size:0; line-height:0; vertical-align:middle; padding:0;">
       <img src="${DIVIDER_URL}" width="${dividerW}" height="${dividerH}" alt=""
@@ -588,11 +607,12 @@
       const slogan = document.getElementById('input-slogan').value.trim();
 
       const container = document.getElementById('signature-render-target');
-      container.innerHTML = getSignatureHtml(name, title, mobile, email, slogan, currentScale, baseLeftOffset, baseTopOffset);
+      container.innerHTML = getSignatureHtml(name, title, mobile, email, slogan, currentScale, baseDividerGap, baseLeftOffset, baseTopOffset);
 
       const w = Math.round(552 * currentScale);
       const h = Math.round(198 * currentScale);
       document.getElementById('size-display-badge').textContent = `${w} × ${h} px (${Math.round(currentScale * 100)}%)`;
+      document.getElementById('gap-display-badge').textContent = `Gap ${baseDividerGap}px`;
       document.getElementById('hoffset-display-badge').textContent = `Left ${baseLeftOffset}px`;
       document.getElementById('voffset-display-badge').textContent = `Top ${baseTopOffset}px`;
     }
@@ -608,7 +628,18 @@
       onScaleChange(pct);
     }
 
-    // Horizontal offset handlers (Left/Right text spacing)
+    // Divider Gap handlers (Space between Logo and Divider)
+    function onGapChange(val) {
+      baseDividerGap = parseInt(val, 10);
+      updateChips('#gap-slider', `${baseDividerGap}px`);
+      updatePreview();
+    }
+    function setGap(val) {
+      document.getElementById('gap-slider').value = val;
+      onGapChange(val);
+    }
+
+    // Horizontal offset handlers (Left/Right text spacing from Divider)
     function onHOffsetChange(val) {
       baseLeftOffset = parseInt(val, 10);
       updateChips('#hoffset-slider', `${baseLeftOffset}px`);
@@ -679,7 +710,7 @@
       const mobile = document.getElementById('input-mobile').value.trim();
       const email = document.getElementById('input-email').value.trim();
       const slogan = document.getElementById('input-slogan').value.trim();
-      const htmlCode = getSignatureHtml(name, title, mobile, email, slogan, currentScale, baseLeftOffset, baseTopOffset);
+      const htmlCode = getSignatureHtml(name, title, mobile, email, slogan, currentScale, baseDividerGap, baseLeftOffset, baseTopOffset);
 
       try {
         await navigator.clipboard.writeText(htmlCode);
@@ -695,7 +726,7 @@
       const mobile = document.getElementById('input-mobile').value.trim();
       const email = document.getElementById('input-email').value.trim();
       const slogan = document.getElementById('input-slogan').value.trim();
-      const bodyContent = getSignatureHtml(name, title, mobile, email, slogan, currentScale, baseLeftOffset, baseTopOffset);
+      const bodyContent = getSignatureHtml(name, title, mobile, email, slogan, currentScale, baseDividerGap, baseLeftOffset, baseTopOffset);
 
       const fullHtml = `<!doctype html>
 <html lang="en">

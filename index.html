@@ -81,7 +81,7 @@
 
     .app-layout {
       display: grid;
-      grid-template-columns: 450px 1fr;
+      grid-template-columns: 460px 1fr;
       gap: 24px;
       align-items: start;
     }
@@ -404,6 +404,15 @@
           <input type="text" id="input-slogan" value="" placeholder="e.g. Innovate &middot; Distribute &middot; Elevate">
         </div>
 
+        <!-- Background Image URL (Editable) -->
+        <div class="form-group">
+          <label for="input-bg">
+            Background Image URL
+            <span style="font-size:11px; text-transform:none; color:#10b981; font-weight:normal;">(Live Updated)</span>
+          </label>
+          <input type="text" id="input-bg" value="https://reevotech.com/wp-content/uploads/2026/11/TestSignature.png?v=2" placeholder="https://...">
+        </div>
+
         <!-- Size Control -->
         <div class="control-box">
           <div class="slider-header">
@@ -494,15 +503,16 @@
   </div>
 
   <script>
-    const BG_IMAGE_URL = 'https://reevotech.com/wp-content/uploads/2026/11/TestSignature.png';
+    const DEFAULT_BG_IMAGE_URL = 'https://reevotech.com/wp-content/uploads/2026/11/TestSignature.png?v=2';
     const WEBSITE_URL = 'https://www.reevotech.com';
     const WEBSITE_TEXT = 'www.reevotech.com';
     let currentScale = 1.0;
     let baseLeftOffset = 242; // default shifted left from original 263
     let baseTopOffset = 24;   // default vertical padding top
 
-    function getSignatureHtml(name, title, mobile, email, slogan = '', scale = 1.0, leftOffset = 242, topOffset = 24) {
+    function getSignatureHtml(name, title, mobile, email, slogan = '', scale = 1.0, leftOffset = 242, topOffset = 24, bgUrl = DEFAULT_BG_IMAGE_URL) {
       const cleanPhone = mobile.replace(/[^0-9+]/g, '');
+      const finalBgUrl = bgUrl.trim() || DEFAULT_BG_IMAGE_URL;
 
       // Proportional dimensions based on scale
       const w = Math.round(552 * scale);
@@ -538,8 +548,8 @@
        width="${w}" height="${h}"
        style="width:${w}px; height:${h}px; border-collapse:collapse; background:transparent;">
   <tr>
-    <td width="${w}" height="${h}" valign="top" background="${BG_IMAGE_URL}"
-        style="width:${w}px; height:${h}px; background-image:url('${BG_IMAGE_URL}'); background-repeat:no-repeat; background-position:left top; background-size:${w}px ${h}px;">
+    <td width="${w}" height="${h}" valign="top" background="${finalBgUrl}"
+        style="width:${w}px; height:${h}px; background-image:url('${finalBgUrl}'); background-repeat:no-repeat; background-position:left top; background-size:${w}px ${h}px;">
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="${w}"
              style="width:${w}px; border-collapse:collapse;">
         <tr>
@@ -570,9 +580,10 @@
       const mobile = document.getElementById('input-mobile').value.trim() || '+639165271923';
       const email = document.getElementById('input-email').value.trim() || 'name@reevotech.com';
       const slogan = document.getElementById('input-slogan').value.trim();
+      const bgUrl = document.getElementById('input-bg').value.trim() || DEFAULT_BG_IMAGE_URL;
 
       const container = document.getElementById('signature-render-target');
-      container.innerHTML = getSignatureHtml(name, title, mobile, email, slogan, currentScale, baseLeftOffset, baseTopOffset);
+      container.innerHTML = getSignatureHtml(name, title, mobile, email, slogan, currentScale, baseLeftOffset, baseTopOffset, bgUrl);
 
       const w = Math.round(552 * currentScale);
       const h = Math.round(198 * currentScale);
@@ -663,7 +674,8 @@
       const mobile = document.getElementById('input-mobile').value.trim();
       const email = document.getElementById('input-email').value.trim();
       const slogan = document.getElementById('input-slogan').value.trim();
-      const htmlCode = getSignatureHtml(name, title, mobile, email, slogan, currentScale, baseLeftOffset, baseTopOffset);
+      const bgUrl = document.getElementById('input-bg').value.trim() || DEFAULT_BG_IMAGE_URL;
+      const htmlCode = getSignatureHtml(name, title, mobile, email, slogan, currentScale, baseLeftOffset, baseTopOffset, bgUrl);
 
       try {
         await navigator.clipboard.writeText(htmlCode);
@@ -679,7 +691,8 @@
       const mobile = document.getElementById('input-mobile').value.trim();
       const email = document.getElementById('input-email').value.trim();
       const slogan = document.getElementById('input-slogan').value.trim();
-      const bodyContent = getSignatureHtml(name, title, mobile, email, slogan, currentScale, baseLeftOffset, baseTopOffset);
+      const bgUrl = document.getElementById('input-bg').value.trim() || DEFAULT_BG_IMAGE_URL;
+      const bodyContent = getSignatureHtml(name, title, mobile, email, slogan, currentScale, baseLeftOffset, baseTopOffset, bgUrl);
 
       const fullHtml = `<!doctype html>
 <html lang="en">
@@ -720,7 +733,7 @@ ${bodyContent}
     }
 
     // Attach real-time listeners
-    ['input-name', 'input-title', 'input-mobile', 'input-email', 'input-slogan'].forEach(id => {
+    ['input-name', 'input-title', 'input-mobile', 'input-email', 'input-slogan', 'input-bg'].forEach(id => {
       document.getElementById(id).addEventListener('input', updatePreview);
     });
 

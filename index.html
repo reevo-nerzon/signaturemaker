@@ -357,7 +357,7 @@
     <header>
       <div class="brand-title">
         <h1>REEVO Signature Maker</h1>
-        <span class="badge-tag">Internal Tool</span>
+        <span class="badge-tag">3-Piece Responsive</span>
       </div>
       <div class="font-indicator">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
@@ -404,15 +404,6 @@
           <input type="text" id="input-slogan" value="" placeholder="e.g. Innovate &middot; Distribute &middot; Elevate">
         </div>
 
-        <!-- Background Image URL (Editable) -->
-        <div class="form-group">
-          <label for="input-bg">
-            Background Image URL
-            <span style="font-size:11px; text-transform:none; color:#10b981; font-weight:normal;">(Live Updated)</span>
-          </label>
-          <input type="text" id="input-bg" value="https://reevotech.com/wp-content/uploads/2026/11/TestSignature.png?v=2" placeholder="https://...">
-        </div>
-
         <!-- Size Control -->
         <div class="control-box">
           <div class="slider-header">
@@ -428,24 +419,10 @@
           </div>
         </div>
 
-        <!-- Horizontal Position Control -->
-        <div class="control-box">
-          <div class="slider-header">
-            <span style="font-size:11.5px; font-weight:700; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.05em;">Horizontal Position (Left/Right)</span>
-            <span class="value-badge" id="offset-display-badge">Left 242px</span>
-          </div>
-          <input type="range" id="offset-slider" min="215" max="270" value="242" step="1" oninput="onOffsetChange(this.value)">
-          <div class="preset-chips">
-            <button class="chip-btn" onclick="setOffset(225)">&larr; More Left (225px)</button>
-            <button class="chip-btn active" id="chip-offset-default" onclick="setOffset(242)">Optimal (242px)</button>
-            <button class="chip-btn" onclick="setOffset(263)">Original (263px) &rarr;</button>
-          </div>
-        </div>
-
         <!-- Vertical Position Control -->
         <div class="control-box">
           <div class="slider-header">
-            <span style="font-size:11.5px; font-weight:700; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.05em;">Vertical Position (Up/Down)</span>
+            <span style="font-size:11.5px; font-weight:700; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.05em;">Vertical Text Alignment</span>
             <span class="value-badge" id="voffset-display-badge">Top 24px</span>
           </div>
           <input type="range" id="voffset-slider" min="8" max="45" value="24" step="1" oninput="onVOffsetChange(this.value)">
@@ -471,7 +448,7 @@
 
       <!-- Preview Card -->
       <div class="card preview-section">
-        <h2 class="card-title">Live Preview (Montserrat)</h2>
+        <h2 class="card-title">Live Preview (Mobile-Safe)</h2>
         
         <div class="preview-container">
           <div id="signature-render-target">
@@ -503,24 +480,29 @@
   </div>
 
   <script>
-    const DEFAULT_BG_IMAGE_URL = 'https://reevotech.com/wp-content/uploads/2026/11/TestSignature.png?v=2';
+    const LOGO_URL = 'https://raw.githubusercontent.com/reevo-nerzon/signaturemaker/main/assets/logo.png';
+    const DIVIDER_URL = 'https://raw.githubusercontent.com/reevo-nerzon/signaturemaker/main/assets/divider.png';
+    const BG_URL = 'https://raw.githubusercontent.com/reevo-nerzon/signaturemaker/main/assets/background.png';
     const WEBSITE_URL = 'https://www.reevotech.com';
     const WEBSITE_TEXT = 'www.reevotech.com';
-    let currentScale = 1.0;
-    let baseLeftOffset = 242; // default shifted left from original 263
-    let baseTopOffset = 24;   // default vertical padding top
 
-    function getSignatureHtml(name, title, mobile, email, slogan = '', scale = 1.0, leftOffset = 242, topOffset = 24, bgUrl = DEFAULT_BG_IMAGE_URL) {
+    let currentScale = 1.0;
+    let baseTopOffset = 24;
+
+    function getSignatureHtml(name, title, mobile, email, slogan = '', scale = 1.0, topOffset = 24) {
       const cleanPhone = mobile.replace(/[^0-9+]/g, '');
-      const finalBgUrl = bgUrl.trim() || DEFAULT_BG_IMAGE_URL;
 
       // Proportional dimensions based on scale
       const w = Math.round(552 * scale);
       const h = Math.round(198 * scale);
-      const leftCol = Math.round(leftOffset * scale);
-      const rightCol = w - leftCol;
+      const logoCol = Math.round(186 * scale);
+      const logoW = Math.round(166 * scale);
+      const logoH = Math.round(138 * scale);
+      const dividerW = Math.max(1, Math.round(2 * scale));
+      const dividerH = Math.round(156 * scale);
+      const rightCol = w - logoCol - dividerW;
       const padTop = Math.round(topOffset * scale);
-      const padRight = Math.round(8 * scale);
+      const padLeft = Math.round(20 * scale);
 
       // Scaled typography with Montserrat font stack
       const nameSize = Math.round(29 * scale);
@@ -546,29 +528,38 @@
 
       return `<table role="presentation" cellpadding="0" cellspacing="0" border="0"
        width="${w}" height="${h}"
-       style="width:${w}px; height:${h}px; border-collapse:collapse; background:transparent;">
+       style="width:${w}px; height:${h}px; border-collapse:collapse; background-image:url('${BG_URL}'); background-repeat:no-repeat; background-position:left top; background-size:${w}px ${h}px; background-color:transparent;">
   <tr>
-    <td width="${w}" height="${h}" valign="top" background="${finalBgUrl}"
-        style="width:${w}px; height:${h}px; background-image:url('${finalBgUrl}'); background-repeat:no-repeat; background-position:left top; background-size:${w}px ${h}px;">
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="${w}"
-             style="width:${w}px; border-collapse:collapse;">
-        <tr>
-          <td width="${leftCol}" style="width:${leftCol}px; font-size:0; line-height:0;">&nbsp;</td>
-          <td width="${rightCol}" valign="top" style="width:${rightCol}px; padding:${padTop}px ${padRight}px 0 0; font-family:${fontStack}; color:#ffffff;">
-            <div style="margin:0; padding:0; font-family:${fontStack}; font-size:${nameSize}px; line-height:${nameLh}px; font-weight:700; color:#ffffff;">${name}</div>
-            <div style="margin:0; padding:0; font-family:${fontStack}; font-size:${titleSize}px; line-height:${titleLh}px; font-weight:400; color:#ffffff;">${title}</div>
-            <div style="margin:0; padding:0; font-family:${fontStack}; font-size:${webSize}px; line-height:${webLh}px; font-weight:700;">
-              <a href="${WEBSITE_URL}" style="color:#ffffff; text-decoration:none; font-family:${fontStack};">${WEBSITE_TEXT}</a>
-            </div>
-            <div style="margin:0; padding:0; font-family:${fontStack}; font-size:${phoneSize}px; line-height:${phoneLh}px; color:#ffffff;">
-              M: <a href="tel:${cleanPhone}" style="color:#ffffff; text-decoration:none; font-family:${fontStack};">${mobile}</a>
-            </div>
-            <div style="margin:0; padding:0; font-family:${fontStack}; font-size:${emailSize}px; line-height:${emailLh}px; color:#ffffff;">
-              <a href="mailto:${email}" style="color:#ffffff; text-decoration:none; font-family:${fontStack};">${email}</a>
-            </div>${sloganHtml}
-          </td>
-        </tr>
-      </table>
+    <!-- Column 1: REEVO Logo Image (Physical element blocks mobile squeeze) -->
+    <td width="${logoCol}" valign="middle" align="center"
+        style="width:${logoCol}px; text-align:center; padding:0 0 0 14px; vertical-align:middle;">
+      <a href="${WEBSITE_URL}" target="_blank" style="text-decoration:none; display:inline-block;">
+        <img src="${LOGO_URL}" width="${logoW}" height="${logoH}" alt="REEVO"
+             style="display:block; width:${logoW}px; height:${logoH}px; border:0; margin:0 auto;" />
+      </a>
+    </td>
+
+    <!-- Column 2: Divider Line Image -->
+    <td width="${dividerW}" valign="middle" align="center"
+        style="width:${dividerW}px; font-size:0; line-height:0; vertical-align:middle; padding:0;">
+      <img src="${DIVIDER_URL}" width="${dividerW}" height="${dividerH}" alt=""
+           style="display:block; width:${dividerW}px; height:${dividerH}px; border:0;" />
+    </td>
+
+    <!-- Column 3: Contact Details (Locked safely to the right of divider) -->
+    <td width="${rightCol}" valign="top"
+        style="width:${rightCol}px; padding:${padTop}px 10px 0 ${padLeft}px; font-family:${fontStack}; color:#ffffff; vertical-align:top;">
+      <div style="margin:0; padding:0; font-family:${fontStack}; font-size:${nameSize}px; line-height:${nameLh}px; font-weight:700; color:#ffffff;">${name}</div>
+      <div style="margin:0; padding:0; font-family:${fontStack}; font-size:${titleSize}px; line-height:${titleLh}px; font-weight:400; color:#ffffff;">${title}</div>
+      <div style="margin:0; padding:0; font-family:${fontStack}; font-size:${webSize}px; line-height:${webLh}px; font-weight:700;">
+        <a href="${WEBSITE_URL}" style="color:#ffffff; text-decoration:none; font-family:${fontStack};">${WEBSITE_TEXT}</a>
+      </div>
+      <div style="margin:0; padding:0; font-family:${fontStack}; font-size:${phoneSize}px; line-height:${phoneLh}px; color:#ffffff;">
+        M: <a href="tel:${cleanPhone}" style="color:#ffffff; text-decoration:none; font-family:${fontStack};">${mobile}</a>
+      </div>
+      <div style="margin:0; padding:0; font-family:${fontStack}; font-size:${emailSize}px; line-height:${emailLh}px; color:#ffffff;">
+        <a href="mailto:${email}" style="color:#ffffff; text-decoration:none; font-family:${fontStack};">${email}</a>
+      </div>${sloganHtml}
     </td>
   </tr>
 </table>`;
@@ -580,15 +571,13 @@
       const mobile = document.getElementById('input-mobile').value.trim() || '+639165271923';
       const email = document.getElementById('input-email').value.trim() || 'name@reevotech.com';
       const slogan = document.getElementById('input-slogan').value.trim();
-      const bgUrl = document.getElementById('input-bg').value.trim() || DEFAULT_BG_IMAGE_URL;
 
       const container = document.getElementById('signature-render-target');
-      container.innerHTML = getSignatureHtml(name, title, mobile, email, slogan, currentScale, baseLeftOffset, baseTopOffset, bgUrl);
+      container.innerHTML = getSignatureHtml(name, title, mobile, email, slogan, currentScale, baseTopOffset);
 
       const w = Math.round(552 * currentScale);
       const h = Math.round(198 * currentScale);
       document.getElementById('size-display-badge').textContent = `${w} × ${h} px (${Math.round(currentScale * 100)}%)`;
-      document.getElementById('offset-display-badge').textContent = `Left ${baseLeftOffset}px`;
       document.getElementById('voffset-display-badge').textContent = `Top ${baseTopOffset}px`;
     }
 
@@ -601,17 +590,6 @@
     function setScale(pct) {
       document.getElementById('size-slider').value = pct;
       onScaleChange(pct);
-    }
-
-    // Horizontal offset handlers
-    function onOffsetChange(val) {
-      baseLeftOffset = parseInt(val, 10);
-      updateChips('#offset-slider', `${baseLeftOffset}px`);
-      updatePreview();
-    }
-    function setOffset(val) {
-      document.getElementById('offset-slider').value = val;
-      onOffsetChange(val);
     }
 
     // Vertical offset handlers
@@ -674,8 +652,7 @@
       const mobile = document.getElementById('input-mobile').value.trim();
       const email = document.getElementById('input-email').value.trim();
       const slogan = document.getElementById('input-slogan').value.trim();
-      const bgUrl = document.getElementById('input-bg').value.trim() || DEFAULT_BG_IMAGE_URL;
-      const htmlCode = getSignatureHtml(name, title, mobile, email, slogan, currentScale, baseLeftOffset, baseTopOffset, bgUrl);
+      const htmlCode = getSignatureHtml(name, title, mobile, email, slogan, currentScale, baseTopOffset);
 
       try {
         await navigator.clipboard.writeText(htmlCode);
@@ -691,8 +668,7 @@
       const mobile = document.getElementById('input-mobile').value.trim();
       const email = document.getElementById('input-email').value.trim();
       const slogan = document.getElementById('input-slogan').value.trim();
-      const bgUrl = document.getElementById('input-bg').value.trim() || DEFAULT_BG_IMAGE_URL;
-      const bodyContent = getSignatureHtml(name, title, mobile, email, slogan, currentScale, baseLeftOffset, baseTopOffset, bgUrl);
+      const bodyContent = getSignatureHtml(name, title, mobile, email, slogan, currentScale, baseTopOffset);
 
       const fullHtml = `<!doctype html>
 <html lang="en">
@@ -733,7 +709,7 @@ ${bodyContent}
     }
 
     // Attach real-time listeners
-    ['input-name', 'input-title', 'input-mobile', 'input-email', 'input-slogan', 'input-bg'].forEach(id => {
+    ['input-name', 'input-title', 'input-mobile', 'input-email', 'input-slogan'].forEach(id => {
       document.getElementById(id).addEventListener('input', updatePreview);
     });
 

@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REEVO Email Signature Maker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --reevo-red: #df0000;
+      --reevo-red-hover: #b80000;
+      --bg-page: #0f1117;
+      --bg-card: #181c24;
+      --bg-input: #12151c;
+      --border-subtle: #272d3b;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1160px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 20px;
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .badge-tag {
+      background: rgba(223, 0, 0, 0.15);
+      color: #ff4d4d;
+      border: 1px solid rgba(223, 0, 0, 0.3);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .app-layout {
+      display: grid;
+      grid-template-columns: 450px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 1020px) {
+      .app-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--text-main);
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="email"] {
+      width: 100%;
+      padding: 11px 14px;
+      font-size: 14px;
+      font-family: 'Montserrat', sans-serif;
+      color: var(--text-main);
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .form-group input:focus {
+      border-color: var(--reevo-red);
+      box-shadow: 0 0 0 3px rgba(223, 0, 0, 0.2);
+    }
+
+    .form-group input[disabled] {
+      background-color: #1a1e28;
+      color: #6b7280;
+      cursor: not-allowed;
+      border-style: dashed;
+    }
+
+    /* Sliders / Control Boxes */
+    .control-box {
+      background: #12151c;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 13px 14px;
+      margin-bottom: 12px;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .value-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #ff4d4d;
+      background: rgba(223, 0, 0, 0.12);
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px solid rgba(223, 0, 0, 0.25);
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #272d3b;
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--reevo-red);
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(223, 0, 0, 0.6);
+      transition: transform 0.1s ease;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+    }
+
+    .preset-chips {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .chip-btn {
+      background: #1f2533;
+      border: 1px solid #2f384a;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .chip-btn:hover {
+      color: #ffffff;
+      background: #2b3347;
+      border-color: #404b63;
+    }
+
+    .chip-btn.active {
+      background: rgba(223, 0, 0, 0.2);
+      border-color: var(--reevo-red);
+      color: #ffffff;
+    }
+
+    .font-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #10b981;
+      font-weight: 600;
+    }
+
+    .preview-section {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .preview-container {
+      background: repeating-conic-gradient(#1f2430 0% 25%, #181c24 0% 50%) 50% / 20px 20px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 32px 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: auto;
+      min-height: 270px;
+    }
+
+    /* Action Buttons */
+    .button-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 18px;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background-color: var(--reevo-red);
+      color: #ffffff;
+      grid-column: span 2;
+      font-size: 15px;
+      padding: 14px 20px;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--reevo-red-hover);
+      box-shadow: 0 4px 16px rgba(223, 0, 0, 0.4);
+    }
+
+    .btn-secondary {
+      background-color: #272d3b;
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background-color: #323a4b;
+    }
+
+    .help-box {
+      margin-top: 14px;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px dashed var(--border-subtle);
+      border-radius: var(--radius-md);
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+
+    .help-box strong {
+      color: var(--text-main);
+    }
+
+    .help-box ol {
+      margin-top: 6px;
+      padding-left: 18px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #10b981;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      display: none;
+      align-items: center;
+      gap: 8px;
+      z-index: 1000;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="brand-title">
+        <h1>REEVO Signature Maker</h1>
+        <span class="badge-tag">Internal Tool</span>
+      </div>
+      <div class="font-indicator">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        Font: Montserrat
+      </div>
+    </header>
+
+    <div class="app-layout">
+      <!-- Input Form Card -->
+      <div class="card">
+        <h2 class="card-title">Signature Details</h2>
+
+        <div class="form-group">
+          <label for="input-name">Full Name</label>
+          <input type="text" id="input-name" value="Nerzon Polintan" placeholder="e.g. Nerzon Polintan">
+        </div>
+
+        <div class="form-group">
+          <label for="input-title">Job Title</label>
+          <input type="text" id="input-title" value="Game Release & Config" placeholder="e.g. Game Release & Config">
+        </div>
+
+        <div class="form-group">
+          <label for="input-website">Website (Fixed)</label>
+          <input type="text" id="input-website" value="www.reevotech.com" disabled>
+        </div>
+
+        <div class="form-group">
+          <label for="input-mobile">Mobile Number</label>
+          <input type="text" id="input-mobile" value="+639165271923" placeholder="+639165271923">
+        </div>
+
+        <div class="form-group">
+          <label for="input-email">Email Address</label>
+          <input type="email" id="input-email" value="nerzon.polintan@reevotech.com" placeholder="name@reevotech.com">
+        </div>
+
+        <!-- Optional Motto / Slogan Field -->
+        <div class="form-group">
+          <label for="input-slogan">
+            Motto / Slogan
+            <span style="font-size:11px; text-transform:none; color:var(--text-muted); font-weight:normal;">(Optional bottom line)</span>
+          </label>
+          <input type="text" id="input-slogan" value="" placeholder="e.g. Innovate &middot; Distribute &middot; Elevate">
+        </div>
+
+        <!-- Size Control -->
+        <div class="control-box">
+          <div class="slider-header">
+            <span style="font-size:11.5px; font-weight:700; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.05em;">Scale / Size</span>
+            <span class="value-badge" id="size-display-badge">552 × 198 px (100%)</span>
+          </div>
+          <input type="range" id="size-slider" min="70" max="115" value="100" step="1" oninput="onScaleChange(this.value)">
+          <div class="preset-chips">
+            <button class="chip-btn" onclick="setScale(75)">Small / Mobile (75%)</button>
+            <button class="chip-btn" onclick="setScale(85)">Compact (85%)</button>
+            <button class="chip-btn active" id="chip-size-default" onclick="setScale(100)">Standard (100%)</button>
+            <button class="chip-btn" onclick="setScale(110)">Large (110%)</button>
+          </div>
+        </div>
+
+        <!-- Horizontal Position Control -->
+        <div class="control-box">
+          <div class="slider-header">
+            <span style="font-size:11.5px; font-weight:700; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.05em;">Horizontal Position (Left/Right)</span>
+            <span class="value-badge" id="offset-display-badge">Left 242px</span>
+          </div>
+          <input type="range" id="offset-slider" min="215" max="270" value="242" step="1" oninput="onOffsetChange(this.value)">
+          <div class="preset-chips">
+            <button class="chip-btn" onclick="setOffset(225)">&larr; More Left (225px)</button>
+            <button class="chip-btn active" id="chip-offset-default" onclick="setOffset(242)">Optimal (242px)</button>
+            <button class="chip-btn" onclick="setOffset(263)">Original (263px) &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Vertical Position Control -->
+        <div class="control-box">
+          <div class="slider-header">
+            <span style="font-size:11.5px; font-weight:700; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.05em;">Vertical Position (Up/Down)</span>
+            <span class="value-badge" id="voffset-display-badge">Top 24px</span>
+          </div>
+          <input type="range" id="voffset-slider" min="8" max="45" value="24" step="1" oninput="onVOffsetChange(this.value)">
+          <div class="preset-chips">
+            <button class="chip-btn" onclick="setVOffset(14)">&uarr; Higher (14px)</button>
+            <button class="chip-btn" onclick="setVOffset(18)">Raised (18px)</button>
+            <button class="chip-btn active" id="chip-voffset-default" onclick="setVOffset(24)">Balanced (24px)</button>
+            <button class="chip-btn" onclick="setVOffset(30)">Lower (30px) &darr;</button>
+          </div>
+        </div>
+
+        <div class="help-box">
+          <strong>How to install in Gmail:</strong>
+          <ol>
+            <li>Fill out or update your details.</li>
+            <li>Click <strong>Copy Signature for Gmail</strong>.</li>
+            <li>In Gmail, open <strong>Settings (gear icon) &rarr; See all settings</strong>.</li>
+            <li>Scroll down to <strong>Signature</strong>, create or select one, and press <strong>Ctrl+V</strong>.</li>
+            <li>Scroll to the bottom and click <strong>Save Changes</strong>.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Preview Card -->
+      <div class="card preview-section">
+        <h2 class="card-title">Live Preview (Montserrat)</h2>
+        
+        <div class="preview-container">
+          <div id="signature-render-target">
+            <!-- Dynamically populated signature table -->
+          </div>
+        </div>
+
+        <div class="button-group">
+          <button class="btn btn-primary" id="btn-copy-rendered" onclick="copySignature()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            Copy Signature for Gmail
+          </button>
+          <button class="btn btn-secondary" onclick="downloadHtmlFile()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Download .html
+          </button>
+          <button class="btn btn-secondary" onclick="copyHtmlSource()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            Copy HTML Code
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>
+    <span id="toast-text">Signature copied to clipboard!</span>
+  </div>
+
+  <script>
+    const BG_IMAGE_URL = 'https://reevotech.com/wp-content/uploads/2026/11/TestSignature.png';
+    const WEBSITE_URL = 'https://www.reevotech.com';
+    const WEBSITE_TEXT = 'www.reevotech.com';
+    let currentScale = 1.0;
+    let baseLeftOffset = 242; // default shifted left from original 263
+    let baseTopOffset = 24;   // default vertical padding top
+
+    function getSignatureHtml(name, title, mobile, email, slogan = '', scale = 1.0, leftOffset = 242, topOffset = 24) {
+      const cleanPhone = mobile.replace(/[^0-9+]/g, '');
+
+      // Proportional dimensions based on scale
+      const w = Math.round(552 * scale);
+      const h = Math.round(198 * scale);
+      const leftCol = Math.round(leftOffset * scale);
+      const rightCol = w - leftCol;
+      const padTop = Math.round(topOffset * scale);
+      const padRight = Math.round(8 * scale);
+
+      // Scaled typography with Montserrat font stack
+      const nameSize = Math.round(29 * scale);
+      const nameLh = Math.round(34 * scale);
+      const titleSize = Math.round(18 * scale);
+      const titleLh = Math.round(25 * scale);
+      const webSize = Math.round(20 * scale);
+      const webLh = Math.round(25 * scale);
+      const phoneSize = Math.round(18 * scale);
+      const phoneLh = Math.round(24 * scale);
+      const emailSize = Math.round(18 * scale);
+      const emailLh = Math.round(24 * scale);
+      const sloganSize = Math.max(11, Math.round(14 * scale));
+      const sloganLh = Math.max(14, Math.round(18 * scale));
+      const sloganMarginTop = Math.max(2, Math.round(4 * scale));
+
+      const fontStack = "'Montserrat', Arial, Helvetica, sans-serif";
+
+      const sloganHtml = slogan.trim() ? `
+              <div style="margin:${sloganMarginTop}px 0 0 0; padding:0; font-family:${fontStack}; font-size:${sloganSize}px; line-height:${sloganLh}px; font-style:italic; color:#ffe5e5;">
+                ${slogan.trim()}
+              </div>` : '';
+
+      return `<table role="presentation" cellpadding="0" cellspacing="0" border="0"
+       width="${w}" height="${h}"
+       style="width:${w}px; height:${h}px; border-collapse:collapse; background:transparent;">
+  <tr>
+    <td width="${w}" height="${h}" valign="top" background="${BG_IMAGE_URL}"
+        style="width:${w}px; height:${h}px; background-image:url('${BG_IMAGE_URL}'); background-repeat:no-repeat; background-position:left top; background-size:${w}px ${h}px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="${w}"
+             style="width:${w}px; border-collapse:collapse;">
+        <tr>
+          <td width="${leftCol}" style="width:${leftCol}px; font-size:0; line-height:0;">&nbsp;</td>
+          <td width="${rightCol}" valign="top" style="width:${rightCol}px; padding:${padTop}px ${padRight}px 0 0; font-family:${fontStack}; color:#ffffff;">
+            <div style="margin:0; padding:0; font-family:${fontStack}; font-size:${nameSize}px; line-height:${nameLh}px; font-weight:700; color:#ffffff;">${name}</div>
+            <div style="margin:0; padding:0; font-family:${fontStack}; font-size:${titleSize}px; line-height:${titleLh}px; font-weight:400; color:#ffffff;">${title}</div>
+            <div style="margin:0; padding:0; font-family:${fontStack}; font-size:${webSize}px; line-height:${webLh}px; font-weight:700;">
+              <a href="${WEBSITE_URL}" style="color:#ffffff; text-decoration:none; font-family:${fontStack};">${WEBSITE_TEXT}</a>
+            </div>
+            <div style="margin:0; padding:0; font-family:${fontStack}; font-size:${phoneSize}px; line-height:${phoneLh}px; color:#ffffff;">
+              M: <a href="tel:${cleanPhone}" style="color:#ffffff; text-decoration:none; font-family:${fontStack};">${mobile}</a>
+            </div>
+            <div style="margin:0; padding:0; font-family:${fontStack}; font-size:${emailSize}px; line-height:${emailLh}px; color:#ffffff;">
+              <a href="mailto:${email}" style="color:#ffffff; text-decoration:none; font-family:${fontStack};">${email}</a>
+            </div>${sloganHtml}
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>`;
+    }
+
+    function updatePreview() {
+      const name = document.getElementById('input-name').value.trim() || 'Your Name';
+      const title = document.getElementById('input-title').value.trim() || 'Your Title';
+      const mobile = document.getElementById('input-mobile').value.trim() || '+639165271923';
+      const email = document.getElementById('input-email').value.trim() || 'name@reevotech.com';
+      const slogan = document.getElementById('input-slogan').value.trim();
+
+      const container = document.getElementById('signature-render-target');
+      container.innerHTML = getSignatureHtml(name, title, mobile, email, slogan, currentScale, baseLeftOffset, baseTopOffset);
+
+      const w = Math.round(552 * currentScale);
+      const h = Math.round(198 * currentScale);
+      document.getElementById('size-display-badge').textContent = `${w} × ${h} px (${Math.round(currentScale * 100)}%)`;
+      document.getElementById('offset-display-badge').textContent = `Left ${baseLeftOffset}px`;
+      document.getElementById('voffset-display-badge').textContent = `Top ${baseTopOffset}px`;
+    }
+
+    // Scale handlers
+    function onScaleChange(pct) {
+      currentScale = pct / 100;
+      updateChips('#size-slider', `${pct}%`);
+      updatePreview();
+    }
+    function setScale(pct) {
+      document.getElementById('size-slider').value = pct;
+      onScaleChange(pct);
+    }
+
+    // Horizontal offset handlers
+    function onOffsetChange(val) {
+      baseLeftOffset = parseInt(val, 10);
+      updateChips('#offset-slider', `${baseLeftOffset}px`);
+      updatePreview();
+    }
+    function setOffset(val) {
+      document.getElementById('offset-slider').value = val;
+      onOffsetChange(val);
+    }
+
+    // Vertical offset handlers
+    function onVOffsetChange(val) {
+      baseTopOffset = parseInt(val, 10);
+      updateChips('#voffset-slider', `${baseTopOffset}px`);
+      updatePreview();
+    }
+    function setVOffset(val) {
+      document.getElementById('voffset-slider').value = val;
+      onVOffsetChange(val);
+    }
+
+    function updateChips(sliderId, searchStr) {
+      document.querySelectorAll(`${sliderId} ~ .preset-chips .chip-btn`).forEach(btn => {
+        if (btn.textContent.includes(searchStr)) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+
+    async function copySignature() {
+      const target = document.getElementById('signature-render-target');
+      const html = target.innerHTML;
+      const text = target.innerText;
+
+      try {
+        if (navigator.clipboard && window.ClipboardItem) {
+          const blobHtml = new Blob([html], { type: 'text/html' });
+          const blobText = new Blob([text], { type: 'text/plain' });
+          await navigator.clipboard.write([
+            new ClipboardItem({
+              'text/html': blobHtml,
+              'text/plain': blobText
+            })
+          ]);
+          showToast('Signature copied! Paste (Ctrl+V) directly into Gmail.');
+          return;
+        }
+      } catch (e) {
+        console.warn('ClipboardItem failed, using Selection fallback', e);
+      }
+
+      // Fallback selection range
+      const range = document.createRange();
+      range.selectNodeContents(target);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      document.execCommand('copy');
+      sel.removeAllRanges();
+      showToast('Signature copied! Paste (Ctrl+V) directly into Gmail.');
+    }
+
+    async function copyHtmlSource() {
+      const name = document.getElementById('input-name').value.trim();
+      const title = document.getElementById('input-title').value.trim();
+      const mobile = document.getElementById('input-mobile').value.trim();
+      const email = document.getElementById('input-email').value.trim();
+      const slogan = document.getElementById('input-slogan').value.trim();
+      const htmlCode = getSignatureHtml(name, title, mobile, email, slogan, currentScale, baseLeftOffset, baseTopOffset);
+
+      try {
+        await navigator.clipboard.writeText(htmlCode);
+        showToast('HTML code copied to clipboard!');
+      } catch (e) {
+        showToast('Failed to copy code to clipboard.');
+      }
+    }
+
+    function downloadHtmlFile() {
+      const name = document.getElementById('input-name').value.trim() || 'signature';
+      const title = document.getElementById('input-title').value.trim();
+      const mobile = document.getElementById('input-mobile').value.trim();
+      const email = document.getElementById('input-email').value.trim();
+      const slogan = document.getElementById('input-slogan').value.trim();
+      const bodyContent = getSignatureHtml(name, title, mobile, email, slogan, currentScale, baseLeftOffset, baseTopOffset);
+
+      const fullHtml = `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>REEVO Gmail Signature - ${name}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+</head>
+<body style="margin:0; padding:20px; background:#ffffff;">
+${bodyContent}
+</body>
+</html>`;
+
+      const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const filename = `reevo-signature-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}.html`;
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast(`Downloaded ${filename}!`);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const text = document.getElementById('toast-text');
+      text.textContent = msg;
+      toast.style.display = 'inline-flex';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 3500);
+    }
+
+    // Attach real-time listeners
+    ['input-name', 'input-title', 'input-mobile', 'input-email', 'input-slogan'].forEach(id => {
+      document.getElementById(id).addEventListener('input', updatePreview);
+    });
+
+    // Initialize preview on page load
+    updatePreview();
+  </script>
+</body>
+</html>

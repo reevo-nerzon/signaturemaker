@@ -4,7 +4,8 @@ Interactive email signature generator and formatter for REEVO team members.
 
 ## Features
 - **Live Preview:** Instant real-time rendering.
-- **Proportional Scaling:** Resize signature from 70% to 115% with optimized mobile/compact presets.
+- **Signature Sizes:** Standard (100%) and Large (110%) presets.
+- **Sticky Preview:** The preview follows scrolling on desktop; smaller screens keep the normal stacked layout.
 - **Position Sliders:** Horizontal and vertical alignment fine-tuning.
 - **Font:** Clean Google Montserrat font styling with standard email-safe fallbacks.
 - **Optional Phone Number:** Show or hide the mobile-number line.

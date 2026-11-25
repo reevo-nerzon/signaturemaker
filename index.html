@@ -265,6 +265,15 @@
       gap: 20px;
     }
 
+    @media (min-width: 1021px) {
+      .preview-section {
+        position: sticky;
+        top: 16px;
+        max-height: calc(100vh - 32px);
+        overflow-y: auto;
+      }
+    }
+
     .preview-container {
       background: repeating-conic-gradient(#1f2430 0% 25%, #181c24 0% 50%) 50% / 20px 20px;
       border: 1px solid var(--border-subtle);
@@ -434,12 +443,9 @@
             <span style="font-size:11.5px; font-weight:700; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.05em;">Scale / Size</span>
             <span class="value-badge" id="size-display-badge">552 × 198 px (100%)</span>
           </div>
-          <input type="range" id="size-slider" min="70" max="115" value="100" step="1" oninput="onScaleChange(this.value)">
-          <div class="preset-chips">
-            <button class="chip-btn" onclick="setScale(75)">Small / Mobile (75%)</button>
-            <button class="chip-btn" onclick="setScale(85)">Compact (85%)</button>
-            <button class="chip-btn active" id="chip-size-default" onclick="setScale(100)">Standard (100%)</button>
-            <button class="chip-btn" onclick="setScale(110)">Large (110%)</button>
+          <div class="preset-chips" id="size-presets" role="group" aria-label="Signature size">
+            <button class="chip-btn active" id="chip-size-default" aria-pressed="true" data-scale="100" onclick="setScale(100)">Standard (100%)</button>
+            <button class="chip-btn" aria-pressed="false" data-scale="110" onclick="setScale(110)">Large (110%)</button>
           </div>
         </div>
 
@@ -689,14 +695,15 @@
     }
 
     // Scale handlers
-    function onScaleChange(pct) {
-      currentScale = pct / 100;
-      updateChips('#size-slider', `${pct}%`);
-      updatePreview();
-    }
     function setScale(pct) {
-      document.getElementById('size-slider').value = pct;
-      onScaleChange(pct);
+      if (pct !== 100 && pct !== 110) return;
+      currentScale = pct / 100;
+      document.querySelectorAll('#size-presets button').forEach(btn => {
+        const selected = Number(btn.dataset.scale) === pct;
+        btn.classList.toggle('active', selected);
+        btn.setAttribute('aria-pressed', String(selected));
+      });
+      updatePreview();
     }
 
     // Divider Gap handlers (Space between Logo and Divider)

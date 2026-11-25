@@ -4,7 +4,7 @@ Interactive email signature generator and formatter for REEVO team members.
 
 ## Features
 - **Live Preview:** Instant real-time rendering.
-- **Signature Sizes:** Standard (100%) and Large (110%) presets.
+- **Signature Sizes:** Small (414 × 149), Compact (469 × 168), Standard (552 × 198), and Large (607 × 218) presets. Each uses PNG artwork exported at the display dimensions, without a scale slider. Contact-spacing adjustments may increase card height.
 - **Sticky Preview:** The preview follows scrolling on desktop; smaller screens keep the normal stacked layout.
 - **Position Sliders:** Horizontal and vertical alignment fine-tuning.
 - **Font:** Clean Google Montserrat font styling with standard email-safe fallbacks.

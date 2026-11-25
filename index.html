@@ -444,9 +444,12 @@
             <span class="value-badge" id="size-display-badge">552 × 198 px (100%)</span>
           </div>
           <div class="preset-chips" id="size-presets" role="group" aria-label="Signature size">
+            <button class="chip-btn" aria-pressed="false" data-scale="75" onclick="setScale(75)">Small (414 × 149)</button>
+            <button class="chip-btn" aria-pressed="false" data-scale="85" onclick="setScale(85)">Compact (469 × 168)</button>
             <button class="chip-btn active" id="chip-size-default" aria-pressed="true" data-scale="100" onclick="setScale(100)">Standard (100%)</button>
             <button class="chip-btn" aria-pressed="false" data-scale="110" onclick="setScale(110)">Large (110%)</button>
           </div>
+          <p class="field-help">Each preset uses artwork exported at its display size. Extra contact spacing can increase the card height.</p>
         </div>
 
         <div class="control-box">
@@ -544,9 +547,13 @@
   </div>
 
   <script>
-    const LOGO_URL = 'https://raw.githubusercontent.com/reevo-nerzon/signaturemaker/main/assets/logo.png';
-    const DIVIDER_URL = 'https://raw.githubusercontent.com/reevo-nerzon/signaturemaker/main/assets/divider.png';
-    const BG_URL = 'https://raw.githubusercontent.com/reevo-nerzon/signaturemaker/main/assets/background.png';
+    const ASSET_ROOT = 'https://raw.githubusercontent.com/reevo-nerzon/signaturemaker/main/assets/presets';
+    const SIZE_PRESETS = {
+      75: { key: 'small', width: 414, height: 149, logoWidth: 132, logoHeight: 110, dividerWidth: 2, dividerHeight: 117 },
+      85: { key: 'compact', width: 469, height: 168, logoWidth: 150, logoHeight: 124, dividerWidth: 2, dividerHeight: 133 },
+      100: { key: 'standard', width: 552, height: 198, logoWidth: 176, logoHeight: 146, dividerWidth: 2, dividerHeight: 156 },
+      110: { key: 'large', width: 607, height: 218, logoWidth: 194, logoHeight: 161, dividerWidth: 2, dividerHeight: 172 }
+    };
     const WEBSITE_URL = 'https://www.reevotech.com';
     const WEBSITE_TEXT = 'www.reevotech.com';
 
@@ -591,13 +598,17 @@
       const phoneVisible = options.showMobile && mobile.trim();
 
       // Proportional dimensions based on scale
-      const w = Math.round(552 * scale);
+      const preset = SIZE_PRESETS[Math.round(scale * 100)] || SIZE_PRESETS[100];
+      const backgroundUrl = `${ASSET_ROOT}/${preset.key}/background.png`;
+      const logoUrl = `${ASSET_ROOT}/${preset.key}/logo.png`;
+      const dividerUrl = `${ASSET_ROOT}/${preset.key}/divider.png`;
+      const w = preset.width;
       const detailHeight = (34 + 25 + 25 + 24 + (phoneVisible ? 24 : 0)) * scale;
-      const h = Math.max(Math.round(198 * scale), Math.ceil(topOffset * scale + detailHeight + lineGap * (phoneVisible ? 4 : 3) + 12 * scale));
-      const logoW = Math.round(176 * scale);
-      const logoH = Math.round(146 * scale);
-      const dividerW = Math.max(1, Math.round(2 * scale));
-      const dividerH = Math.round(156 * scale);
+      const h = Math.max(preset.height, Math.ceil(topOffset * scale + detailHeight + lineGap * (phoneVisible ? 4 : 3) + 12 * scale));
+      const logoW = preset.logoWidth;
+      const logoH = preset.logoHeight;
+      const dividerW = preset.dividerWidth;
+      const dividerH = preset.dividerHeight;
       const gap = Math.round(dividerGap * scale);
 
       const logoLeft = Math.round(Number(document.getElementById('logo-offset').value) * scale);
@@ -621,13 +632,13 @@
 
       let signature = `<table role="presentation" cellpadding="0" cellspacing="0" border="0"
        width="${w}" height="${h}"
-       style="width:${w}px; height:${h}px; border-collapse:collapse; background-image:url('${BG_URL}'); background-repeat:no-repeat; background-position:left top; background-size:${w}px ${h}px; background-color:transparent;">
+       style="width:${w}px; height:${h}px; table-layout:fixed; border-collapse:collapse; background-image:url('${backgroundUrl}'); background-repeat:no-repeat; background-position:left top; background-size:${w}px ${h}px; background-color:transparent;">
   <tr>
     <!-- Column 1: REEVO Logo Image (Physical element blocks mobile squeeze) -->
     <td width="${logoCol}" valign="middle" align="center"
         style="box-sizing:border-box; width:${logoCol}px; text-align:center; padding:0 ${gap}px 0 ${logoLeft}px; vertical-align:middle;">
       <a href="${WEBSITE_URL}" target="_blank" style="text-decoration:none; display:inline-block;">
-        <img src="${LOGO_URL}" width="${logoW}" height="${logoH}" alt="REEVO"
+        <img src="${logoUrl}" width="${logoW}" height="${logoH}" alt="REEVO"
              style="display:block; width:${logoW}px; height:${logoH}px; border:0; margin:0 auto;" />
       </a>
     </td>
@@ -635,13 +646,13 @@
     <!-- Column 2: Divider Line Image (with dedicated breathing room) -->
     <td width="${dividerW}" valign="middle" align="center"
         style="width:${dividerW}px; font-size:0; line-height:0; vertical-align:middle; padding:0;">
-      <img src="${DIVIDER_URL}" width="${dividerW}" height="${dividerH}" alt=""
+      <img src="${dividerUrl}" width="${dividerW}" height="${dividerH}" alt=""
            style="display:block; width:${dividerW}px; height:${dividerH}px; border:0;" />
     </td>
 
     <!-- Column 3: Contact Details (Locked safely to the right of divider) -->
     <td width="${rightCol}" valign="top"
-        style="box-sizing:border-box; width:${rightCol}px; padding:${padTop}px 10px 0 ${padLeft}px; font-family:${fontStack}; color:#ffffff; vertical-align:top;">
+        style="box-sizing:border-box; width:${rightCol}px; padding:${padTop}px 10px 0 ${padLeft}px; overflow-wrap:break-word; font-family:${fontStack}; color:#ffffff; vertical-align:top;">
       <div style="margin:0; padding:0; font-family:${fontStack}; font-size:${nameSize}px; padding-bottom:${lineGap}px; line-height:${nameLh}px; font-weight:700; color:#ffffff;">${name}</div>
       <div style="margin:0; padding:0; font-family:${fontStack}; font-size:${titleSize}px; padding-bottom:${lineGap}px; line-height:${titleLh}px; font-weight:400; color:#ffffff;">${title}</div>
       <div style="margin:0; padding:0; font-family:${fontStack}; font-size:${webSize}px; padding-bottom:${lineGap}px; line-height:${webLh}px; font-weight:700;">
@@ -686,7 +697,7 @@
       if (options.image && banner) {
         banner.addEventListener('error', () => { status.textContent = 'Image could not load. Check the URL and public sharing permissions, or use a direct GIF/image URL.'; });
       }
-      const w = Math.round(552 * currentScale);
+      const w = SIZE_PRESETS[Math.round(currentScale * 100)].width;
       const h = container.querySelector('table[height]').getAttribute('height');
       document.getElementById('size-display-badge').textContent = `${w} × ${h} px (${Math.round(currentScale * 100)}%)`;
       document.getElementById('gap-display-badge').textContent = `Gap ${baseDividerGap}px`;
@@ -696,7 +707,7 @@
 
     // Scale handlers
     function setScale(pct) {
-      if (pct !== 100 && pct !== 110) return;
+      if (!Object.hasOwn(SIZE_PRESETS, pct)) return;
       currentScale = pct / 100;
       document.querySelectorAll('#size-presets button').forEach(btn => {
         const selected = Number(btn.dataset.scale) === pct;

@@ -7,7 +7,9 @@ Interactive email signature generator and formatter for REEVO team members.
 - **Proportional Scaling:** Resize signature from 70% to 115% with optimized mobile/compact presets.
 - **Position Sliders:** Horizontal and vertical alignment fine-tuning.
 - **Font:** Clean Google Montserrat font styling with standard email-safe fallbacks.
-- **Optional Slogan:** Bottom motto line support.
+- **Optional Phone Number:** Show or hide the mobile-number line.
+- **Layout Controls:** Contact line spacing, logo inset, divider gap, and text alignment.
+- **Animated Banner:** Public image/GIF URLs, with the promotional GIF below the signature by default and an option to place it above. Supports Google Drive file links when publicly shared.
 - **One-Click Export:** Rich-text clipboard copy for Gmail, standalone `.html` download, and raw HTML code copying.
 
 ## How to Use

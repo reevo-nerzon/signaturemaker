@@ -127,7 +127,9 @@
     }
 
     .form-group input[type="text"],
-    .form-group input[type="email"] {
+    .form-group input[type="email"],
+    .form-group input[type="url"],
+    .form-group select {
       width: 100%;
       padding: 11px 14px;
       font-size: 14px;
@@ -152,6 +154,18 @@
       border-style: dashed;
     }
 
+    .toggle-label { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-muted); margin:8px 0 14px; }
+    input[type="checkbox"] { accent-color:var(--reevo-red); width:16px; height:16px; }
+    .field-help { color:var(--text-muted); font-size:12px; line-height:1.6; margin-top:7px; }
+    #image-status { color:#fbbf24; }
+    .preview-section { min-width:0; }
+    @media (max-width:600px) {
+      .card { padding:16px; }
+      header, .brand-title { flex-wrap:wrap; gap:10px; }
+      h1 { font-size:21px; }
+      .button-group { grid-template-columns:1fr; }
+      .preview-container { justify-content:flex-start; }
+    }
     /* Sliders / Control Boxes */
     .control-box {
       background: #12151c;
@@ -390,20 +404,30 @@
           <input type="text" id="input-mobile" value="+1 555 234 5678" placeholder="e.g. +1 555 234 5678">
         </div>
 
+        <label class="toggle-label"><input type="checkbox" id="show-mobile" checked> Show mobile number</label>
+
         <div class="form-group">
           <label for="input-email">Email Address</label>
           <input type="email" id="input-email" value="alex.rivera@reevotech.com" placeholder="e.g. alex.rivera@reevotech.com">
         </div>
 
-        <!-- Optional Motto / Slogan Field -->
-        <div class="form-group">
-          <label for="input-slogan">
-            Motto / Slogan
-            <span style="font-size:11px; text-transform:none; color:var(--text-muted); font-weight:normal;">(Optional bottom line)</span>
-          </label>
-          <input type="text" id="input-slogan" value="" placeholder="e.g. Innovate &middot; Distribute &middot; Elevate">
+        <div class="control-box">
+          <div class="slider-header"><label for="line-gap">Contact line spacing</label><span class="value-badge" id="line-gap-badge">4px</span></div>
+          <input type="range" id="line-gap" min="0" max="12" value="4" oninput="updatePreview()">
         </div>
-
+        <div class="control-box">
+          <label class="toggle-label"><input type="checkbox" id="show-image" checked> Include external image / animated GIF</label>
+          <div class="form-group">
+            <label for="image-url">Image URL</label>
+            <input type="url" id="image-url" value="https://reevotech.com/wp-content/uploads/2026/11/Email-Signature_BFC-CE_X-FruitFrenzy_Xmas-WIld-Blaze.gif" placeholder="https://example.com/banner.gif">
+            <p class="field-help">Use a public image URL or Google Drive file link. GIF animation is preserved. Drive files must be shared with “Anyone with the link”.</p>
+          </div>
+          <div class="form-group"><label for="image-position">Image placement</label><select id="image-position"><option value="top">Above signature</option><option value="bottom" selected>Below signature</option></select></div>
+          <div class="form-group"><label for="image-alt">Image description</label><input type="text" id="image-alt" value="REEVO promotional banner"></div>
+          <div class="slider-header"><label for="image-gap">Gap from signature</label><span class="value-badge" id="image-gap-badge">2px</span></div>
+          <input type="range" id="image-gap" min="0" max="30" value="2" oninput="updatePreview()">
+          <p id="image-status" class="field-help" role="status" aria-live="polite"></p>
+        </div>
         <!-- Scale / Size Control -->
         <div class="control-box">
           <div class="slider-header">
@@ -419,17 +443,23 @@
           </div>
         </div>
 
+        <div class="control-box">
+          <div class="slider-header"><label for="logo-offset">Logo left inset</label><span class="value-badge" id="logo-offset-badge">20px</span></div>
+          <input type="range" id="logo-offset" min="8" max="40" value="20" oninput="updatePreview()">
+          <p class="field-help">Increase to move the logo and divider to the right.</p>
+        </div>
         <!-- Divider Spacing (Gap between Logo and Divider) Control -->
         <div class="control-box">
           <div class="slider-header">
             <span style="font-size:11.5px; font-weight:700; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.05em;">Divider Spacing (Gap from Logo)</span>
-            <span class="value-badge" id="gap-display-badge">Gap 14px</span>
+            <span class="value-badge" id="gap-display-badge">Gap 26px</span>
           </div>
-          <input type="range" id="gap-slider" min="4" max="30" value="14" step="1" oninput="onGapChange(this.value)">
+          <input type="range" id="gap-slider" min="4" max="45" value="26" step="1" oninput="onGapChange(this.value)">
           <div class="preset-chips">
             <button class="chip-btn" onclick="setGap(8)">Closer (8px)</button>
-            <button class="chip-btn active" id="chip-gap-default" onclick="setGap(14)">Spacious / Balanced (14px)</button>
-            <button class="chip-btn" onclick="setGap(22)">Extra Wide (22px)</button>
+            <button class="chip-btn" onclick="setGap(14)">Balanced (14px)</button>
+            <button class="chip-btn active" id="chip-gap-default" onclick="setGap(26)">Default (26px)</button>
+            <button class="chip-btn" onclick="setGap(30)">Reference (30px)</button>
           </div>
         </div>
 
@@ -443,7 +473,7 @@
           <div class="preset-chips">
             <button class="chip-btn" onclick="setHOffset(10)">&larr; Closer to Line (10px)</button>
             <button class="chip-btn active" id="chip-hoffset-default" onclick="setHOffset(18)">Balanced (18px)</button>
-            <button class="chip-btn" onclick="setHOffset(28)">More Indented (28px) &rarr;</button>
+            <button class="chip-btn" onclick="setHOffset(28)">Reference (28px)</button>
           </div>
         </div>
 
@@ -515,25 +545,57 @@
     const WEBSITE_TEXT = 'www.reevotech.com';
 
     let currentScale = 1.0;
-    let baseDividerGap = 14; // default gap on either side of the divider line
+    let baseDividerGap = 26; // default gap on either side of the divider line
     let baseLeftOffset = 18; // default padding left for text from divider
     let baseTopOffset = 24;  // default padding top for text
 
-    function getSignatureHtml(name, title, mobile, email, slogan = '', scale = 1.0, dividerGap = 14, leftOffset = 18, topOffset = 24) {
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+    }
+
+    function imageUrl(value) {
+      if (!value.trim()) return '';
+      try {
+        const url = new URL(value.trim());
+        if (!['https:', 'http:'].includes(url.protocol) || url.username || url.password) return '';
+        if (url.hostname === 'drive.google.com') {
+          const id = url.pathname.match(/^\/file\/d\/([a-zA-Z0-9_-]+)/)?.[1] || url.searchParams.get('id');
+          if (!id || !/^[a-zA-Z0-9_-]+$/.test(id)) return '';
+          return 'https://drive.google.com/uc?export=view&id=' + encodeURIComponent(id);
+        }
+        return url.href;
+      } catch { return ''; }
+    }
+
+    function getOptions() {
+      return {
+        showMobile: document.getElementById('show-mobile').checked,
+        lineGap: Number(document.getElementById('line-gap').value),
+        image: document.getElementById('show-image').checked ? imageUrl(document.getElementById('image-url').value) : '',
+        position: document.getElementById('image-position').value,
+        imageGap: Number(document.getElementById('image-gap').value),
+        alt: document.getElementById('image-alt').value
+      };
+    }
+
+    function getSignatureHtml(name, title, mobile, email, scale = 1.0, dividerGap = 26, leftOffset = 18, topOffset = 24, options = getOptions()) {
       const cleanPhone = mobile.replace(/[^0-9+]/g, '');
+      [name, title, mobile, email] = [name, title, mobile, email].map(escapeHtml);
+      const lineGap = Math.round(Math.max(0, Math.min(12, options.lineGap || 0)) * scale);
+      const phoneVisible = options.showMobile && mobile.trim();
 
       // Proportional dimensions based on scale
       const w = Math.round(552 * scale);
-      const h = Math.round(198 * scale);
-      const logoW = Math.round(166 * scale);
-      const logoH = Math.round(138 * scale);
+      const detailHeight = (34 + 25 + 25 + 24 + (phoneVisible ? 24 : 0)) * scale;
+      const h = Math.max(Math.round(198 * scale), Math.ceil(topOffset * scale + detailHeight + lineGap * (phoneVisible ? 4 : 3) + 12 * scale));
+      const logoW = Math.round(176 * scale);
+      const logoH = Math.round(146 * scale);
       const dividerW = Math.max(1, Math.round(2 * scale));
       const dividerH = Math.round(156 * scale);
       const gap = Math.round(dividerGap * scale);
 
-      // Logo column has left margin 12px and right padding of 'gap'
-      const logoCol = Math.round((166 + 12 + gap) * scale);
-      const dividerCol = dividerW + (gap * 2);
+      const logoLeft = Math.round(Number(document.getElementById('logo-offset').value) * scale);
+      const logoCol = logoW + logoLeft + gap;
       const rightCol = Math.max(200, w - logoCol - dividerW);
       const padTop = Math.round(topOffset * scale);
       const padLeft = Math.round(leftOffset * scale);
@@ -549,24 +611,15 @@
       const phoneLh = Math.round(24 * scale);
       const emailSize = Math.round(18 * scale);
       const emailLh = Math.round(24 * scale);
-      const sloganSize = Math.max(11, Math.round(14 * scale));
-      const sloganLh = Math.max(14, Math.round(18 * scale));
-      const sloganMarginTop = Math.max(2, Math.round(4 * scale));
-
       const fontStack = "'Montserrat', Arial, Helvetica, sans-serif";
 
-      const sloganHtml = slogan.trim() ? `
-              <div style="margin:${sloganMarginTop}px 0 0 0; padding:0; font-family:${fontStack}; font-size:${sloganSize}px; line-height:${sloganLh}px; font-style:italic; color:#ffe5e5;">
-                ${slogan.trim()}
-              </div>` : '';
-
-      return `<table role="presentation" cellpadding="0" cellspacing="0" border="0"
+      let signature = `<table role="presentation" cellpadding="0" cellspacing="0" border="0"
        width="${w}" height="${h}"
        style="width:${w}px; height:${h}px; border-collapse:collapse; background-image:url('${BG_URL}'); background-repeat:no-repeat; background-position:left top; background-size:${w}px ${h}px; background-color:transparent;">
   <tr>
     <!-- Column 1: REEVO Logo Image (Physical element blocks mobile squeeze) -->
     <td width="${logoCol}" valign="middle" align="center"
-        style="width:${logoCol}px; text-align:center; padding:0 ${gap}px 0 12px; vertical-align:middle;">
+        style="box-sizing:border-box; width:${logoCol}px; text-align:center; padding:0 ${gap}px 0 ${logoLeft}px; vertical-align:middle;">
       <a href="${WEBSITE_URL}" target="_blank" style="text-decoration:none; display:inline-block;">
         <img src="${LOGO_URL}" width="${logoW}" height="${logoH}" alt="REEVO"
              style="display:block; width:${logoW}px; height:${logoH}px; border:0; margin:0 auto;" />
@@ -582,35 +635,53 @@
 
     <!-- Column 3: Contact Details (Locked safely to the right of divider) -->
     <td width="${rightCol}" valign="top"
-        style="width:${rightCol}px; padding:${padTop}px 10px 0 ${padLeft}px; font-family:${fontStack}; color:#ffffff; vertical-align:top;">
-      <div style="margin:0; padding:0; font-family:${fontStack}; font-size:${nameSize}px; line-height:${nameLh}px; font-weight:700; color:#ffffff;">${name}</div>
-      <div style="margin:0; padding:0; font-family:${fontStack}; font-size:${titleSize}px; line-height:${titleLh}px; font-weight:400; color:#ffffff;">${title}</div>
-      <div style="margin:0; padding:0; font-family:${fontStack}; font-size:${webSize}px; line-height:${webLh}px; font-weight:700;">
+        style="box-sizing:border-box; width:${rightCol}px; padding:${padTop}px 10px 0 ${padLeft}px; font-family:${fontStack}; color:#ffffff; vertical-align:top;">
+      <div style="margin:0; padding:0; font-family:${fontStack}; font-size:${nameSize}px; padding-bottom:${lineGap}px; line-height:${nameLh}px; font-weight:700; color:#ffffff;">${name}</div>
+      <div style="margin:0; padding:0; font-family:${fontStack}; font-size:${titleSize}px; padding-bottom:${lineGap}px; line-height:${titleLh}px; font-weight:400; color:#ffffff;">${title}</div>
+      <div style="margin:0; padding:0; font-family:${fontStack}; font-size:${webSize}px; padding-bottom:${lineGap}px; line-height:${webLh}px; font-weight:700;">
         <a href="${WEBSITE_URL}" style="color:#ffffff; text-decoration:none; font-family:${fontStack};">${WEBSITE_TEXT}</a>
       </div>
-      <div style="margin:0; padding:0; font-family:${fontStack}; font-size:${phoneSize}px; line-height:${phoneLh}px; color:#ffffff;">
+      ${phoneVisible ? `<div style="margin:0; padding:0; font-family:${fontStack}; font-size:${phoneSize}px; padding-bottom:${lineGap}px; line-height:${phoneLh}px; color:#ffffff;">
         M: <a href="tel:${cleanPhone}" style="color:#ffffff; text-decoration:none; font-family:${fontStack};">${mobile}</a>
-      </div>
+      </div>` : ''}
       <div style="margin:0; padding:0; font-family:${fontStack}; font-size:${emailSize}px; line-height:${emailLh}px; color:#ffffff;">
         <a href="mailto:${email}" style="color:#ffffff; text-decoration:none; font-family:${fontStack};">${email}</a>
-      </div>${sloganHtml}
+      </div>
     </td>
   </tr>
 </table>`;
+      if (!options.image) return signature;
+      const imageWidth = w;
+      const image = `<img src="${escapeHtml(options.image)}" width="${imageWidth}" alt="${escapeHtml(options.alt || 'Promotional banner')}" style="display:block; width:${imageWidth}px; max-width:100%; height:auto; border:0;">`;
+      const gapHeight = Math.max(0, Math.min(30, options.imageGap || 0));
+      const gapRow = gapHeight ? `<tr><td height="${gapHeight}" style="height:${gapHeight}px; font-size:0; line-height:0;">&nbsp;</td></tr>` : '';
+      const imageRow = `<tr><td style="padding:0;">${image}</td></tr>`;
+      const signatureRow = `<tr><td style="padding:0;">${signature}</td></tr>`;
+      return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="${w}" style="width:${w}px; border-collapse:collapse;">${options.position === 'bottom' ? signatureRow + gapRow + imageRow : imageRow + gapRow + signatureRow}</table>`;
     }
 
     function updatePreview() {
       const name = document.getElementById('input-name').value.trim() || 'Alex Rivera';
       const title = document.getElementById('input-title').value.trim() || 'Senior Game Producer';
-      const mobile = document.getElementById('input-mobile').value.trim() || '+1 555 234 5678';
+      const mobile = document.getElementById('input-mobile').value.trim();
       const email = document.getElementById('input-email').value.trim() || 'alex.rivera@reevotech.com';
-      const slogan = document.getElementById('input-slogan').value.trim();
 
       const container = document.getElementById('signature-render-target');
-      container.innerHTML = getSignatureHtml(name, title, mobile, email, slogan, currentScale, baseDividerGap, baseLeftOffset, baseTopOffset);
+      container.innerHTML = getSignatureHtml(name, title, mobile, email, currentScale, baseDividerGap, baseLeftOffset, baseTopOffset);
 
+      document.getElementById('input-mobile').disabled = !document.getElementById('show-mobile').checked;
+      document.getElementById('logo-offset-badge').textContent = document.getElementById('logo-offset').value + 'px';
+      document.getElementById('line-gap-badge').textContent = document.getElementById('line-gap').value + 'px';
+      document.getElementById('image-gap-badge').textContent = document.getElementById('image-gap').value + 'px';
+      const status = document.getElementById('image-status');
+      const options = getOptions();
+      status.textContent = document.getElementById('show-image').checked && document.getElementById('image-url').value.trim() && !options.image ? 'Enter a valid public HTTP or HTTPS image URL.' : '';
+      const banner = container.querySelector('img[alt="' + CSS.escape(options.alt || 'Promotional banner') + '"]');
+      if (options.image && banner) {
+        banner.addEventListener('error', () => { status.textContent = 'Image could not load. Check the URL and public sharing permissions, or use a direct GIF/image URL.'; });
+      }
       const w = Math.round(552 * currentScale);
-      const h = Math.round(198 * currentScale);
+      const h = container.querySelector('table[height]').getAttribute('height');
       document.getElementById('size-display-badge').textContent = `${w} × ${h} px (${Math.round(currentScale * 100)}%)`;
       document.getElementById('gap-display-badge').textContent = `Gap ${baseDividerGap}px`;
       document.getElementById('hoffset-display-badge').textContent = `Left ${baseLeftOffset}px`;
@@ -709,8 +780,7 @@
       const title = document.getElementById('input-title').value.trim();
       const mobile = document.getElementById('input-mobile').value.trim();
       const email = document.getElementById('input-email').value.trim();
-      const slogan = document.getElementById('input-slogan').value.trim();
-      const htmlCode = getSignatureHtml(name, title, mobile, email, slogan, currentScale, baseDividerGap, baseLeftOffset, baseTopOffset);
+      const htmlCode = document.getElementById('signature-render-target').innerHTML;
 
       try {
         await navigator.clipboard.writeText(htmlCode);
@@ -725,15 +795,14 @@
       const title = document.getElementById('input-title').value.trim();
       const mobile = document.getElementById('input-mobile').value.trim();
       const email = document.getElementById('input-email').value.trim();
-      const slogan = document.getElementById('input-slogan').value.trim();
-      const bodyContent = getSignatureHtml(name, title, mobile, email, slogan, currentScale, baseDividerGap, baseLeftOffset, baseTopOffset);
+      const bodyContent = document.getElementById('signature-render-target').innerHTML;
 
       const fullHtml = `<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>REEVO Gmail Signature - ${name}</title>
+  <title>REEVO Gmail Signature - ${escapeHtml(name)}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -767,7 +836,7 @@ ${bodyContent}
     }
 
     // Attach real-time listeners
-    ['input-name', 'input-title', 'input-mobile', 'input-email', 'input-slogan'].forEach(id => {
+    ['input-name', 'input-title', 'input-mobile', 'input-email', 'show-mobile', 'show-image', 'image-url', 'image-position', 'image-alt'].forEach(id => {
       document.getElementById(id).addEventListener('input', updatePreview);
     });
 
